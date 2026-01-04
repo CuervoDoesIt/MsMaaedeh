@@ -1,47 +1,25 @@
+import { useTranslation } from 'react-i18next';
+
 const Catering = () => {
+  const { t } = useTranslation();
+
   const packages = [
     {
       id: 1,
-      name: 'Intimate Gathering',
-      servings: '10-20 people',
-      price: 'Starting at $500',
-      features: [
-        'Selection of nigiri and maki',
-        'Fresh sashimi platter',
-        'Vegetarian options',
-        'Professional presentation',
-        'Setup and cleanup',
-      ],
+      key: 'intimate',
+      featureKeys: ['f1', 'f2', 'f3', 'f4', 'f5'] as const,
       emoji: '🍱',
     },
     {
       id: 2,
-      name: 'Corporate Event',
-      servings: '20-50 people',
-      price: 'Starting at $1,200',
-      features: [
-        'Premium sushi selection',
-        'Specialty rolls',
-        'Appetizer platters',
-        'Live sushi station option',
-        'Full service staff',
-        'Custom menu planning',
-      ],
+      key: 'corporate',
+      featureKeys: ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'] as const,
       emoji: '🏢',
     },
     {
       id: 3,
-      name: 'Luxury Experience',
-      servings: '50+ people',
-      price: 'Custom pricing',
-      features: [
-        'Omakase-style service',
-        'Premium ingredients',
-        'Live chef demonstration',
-        'Custom menu design',
-        'Full event coordination',
-        'Beverage pairing options',
-      ],
+      key: 'luxury',
+      featureKeys: ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'] as const,
       emoji: '⭐',
     },
   ];
@@ -51,10 +29,9 @@ const Catering = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Catering</h1>
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">{t('catering.header.title')}</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Elevate your event with artisan sushi catering. From intimate gatherings to large corporate events,
-            we bring the art of sushi to you.
+            {t('catering.header.subtitle')}
           </p>
         </div>
 
@@ -68,14 +45,14 @@ const Catering = () => {
             >
               <div className="bg-gradient-to-br from-red-500 to-red-600 text-white p-8 text-center">
                 <span className="text-6xl block mb-4">{pkg.emoji}</span>
-                <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
-                <p className="text-red-100 mb-2">{pkg.servings}</p>
-                <p className="text-2xl font-bold">{pkg.price}</p>
+                <h3 className="text-2xl font-bold mb-2">{t(`catering.packages.${pkg.key}.name`)}</h3>
+                <p className="text-red-100 mb-2">{t(`catering.packages.${pkg.key}.servings`)}</p>
+                <p className="text-2xl font-bold">{t(`catering.packages.${pkg.key}.price`)}</p>
               </div>
               <div className="p-6">
                 <ul className="space-y-3 mb-6">
-                  {pkg.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start">
+                  {pkg.featureKeys.map((featureKey) => (
+                    <li key={featureKey} className="flex items-start">
                       <svg
                         className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0"
                         fill="currentColor"
@@ -87,12 +64,12 @@ const Catering = () => {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-gray-700">{feature}</span>
+                      <span className="text-gray-700">{t(`catering.packages.${pkg.key}.features.${featureKey}`)}</span>
                     </li>
                   ))}
                 </ul>
                 <button className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors">
-                  Request Quote
+                  {t('catering.packages.requestQuote')}
                 </button>
               </div>
             </div>
@@ -102,19 +79,19 @@ const Catering = () => {
         {/* Event Types */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Perfect For Any Event
+            {t('catering.eventTypes.title')}
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: '💼', title: 'Corporate Events', desc: 'Impress clients and colleagues' },
-              { icon: '💒', title: 'Weddings', desc: 'Elegant reception catering' },
-              { icon: '🎉', title: 'Private Parties', desc: 'Make your celebration special' },
-              { icon: '🎓', title: 'Special Occasions', desc: 'Graduations, anniversaries & more' },
+              { icon: '💼', key: 'corporate' },
+              { icon: '💒', key: 'weddings' },
+              { icon: '🎉', key: 'privateParties' },
+              { icon: '🎓', key: 'occasions' },
             ].map((event, idx) => (
               <div key={idx} className="text-center p-4">
                 <span className="text-5xl block mb-3">{event.icon}</span>
-                <h4 className="font-bold text-gray-900 mb-2">{event.title}</h4>
-                <p className="text-gray-600 text-sm">{event.desc}</p>
+                <h4 className="font-bold text-gray-900 mb-2">{t(`catering.eventTypes.items.${event.key}.title`)}</h4>
+                <p className="text-gray-600 text-sm">{t(`catering.eventTypes.items.${event.key}.desc`)}</p>
               </div>
             ))}
           </div>
@@ -123,21 +100,21 @@ const Catering = () => {
         {/* Process */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            How It Works
+            {t('catering.process.title')}
           </h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { step: '1', title: 'Contact Us', desc: 'Share your event details and preferences' },
-              { step: '2', title: 'Custom Menu', desc: 'We design a menu tailored to your needs' },
-              { step: '3', title: 'Confirmation', desc: 'Review and approve your catering plan' },
-              { step: '4', title: 'Event Day', desc: 'We handle everything on the day of your event' },
+              { step: '1', key: 's1' },
+              { step: '2', key: 's2' },
+              { step: '3', key: 's3' },
+              { step: '4', key: 's4' },
             ].map((item, idx) => (
               <div key={idx} className="text-center">
                 <div className="bg-red-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                   {item.step}
                 </div>
-                <h4 className="font-bold text-gray-900 mb-2">{item.title}</h4>
-                <p className="text-gray-600 text-sm">{item.desc}</p>
+                <h4 className="font-bold text-gray-900 mb-2">{t(`catering.process.steps.${item.key}.title`)}</h4>
+                <p className="text-gray-600 text-sm">{t(`catering.process.steps.${item.key}.desc`)}</p>
               </div>
             ))}
           </div>
@@ -146,7 +123,7 @@ const Catering = () => {
         {/* Gallery Preview */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Past Events
+            {t('catering.pastEvents.title')}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((item) => (
@@ -162,12 +139,12 @@ const Catering = () => {
 
         {/* CTA */}
         <div className="text-center bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg p-12">
-          <h2 className="text-3xl font-bold mb-4">Plan Your Event</h2>
+          <h2 className="text-3xl font-bold mb-4">{t('catering.cta.title')}</h2>
           <p className="text-xl mb-8">
-            Contact us today for a custom quote and make your event unforgettable
+            {t('catering.cta.desc')}
           </p>
           <button className="bg-white text-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-            Get a Quote
+            {t('catering.cta.button')}
           </button>
         </div>
       </div>

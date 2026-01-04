@@ -1,16 +1,23 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    const next = i18n.language === 'fa' ? 'en' : 'fa';
+    void i18n.changeLanguage(next);
+  };
 
   const navLinks = [
-    { to: '/', label: 'Home' },
-    { to: '/gallery', label: 'Gallery' },
-    { to: '/workshops', label: 'Workshops' },
-    { to: '/catering', label: 'Catering' },
-    { to: '/about', label: 'About' },
-    { to: '/contact', label: 'Contact' },
+    { to: '/', label: t('nav.home') },
+    { to: '/gallery', label: t('nav.gallery') },
+    { to: '/workshops', label: t('nav.workshops') },
+    { to: '/catering', label: t('nav.catering') },
+    { to: '/about', label: t('nav.about') },
+    { to: '/contact', label: t('nav.contact') },
   ];
 
   return (
@@ -18,13 +25,13 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center gap-2">
             <span className="text-2xl font-bold text-red-500">鮨</span>
             <span className="text-xl font-semibold">Ms. Maaedeh</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
@@ -35,6 +42,16 @@ const Navigation = () => {
               </Link>
             ))}
           </div>
+
+          {/* Language Toggle */}
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="hidden md:inline-flex items-center justify-center px-3 py-1.5 rounded-md border border-gray-700 text-sm font-medium hover:border-red-500 hover:text-red-500 transition-colors duration-200"
+            aria-label={t('language.toggleLabel')}
+          >
+            {i18n.language === 'fa' ? t('language.en') : t('language.fa')}
+          </button>
 
           {/* Mobile menu button */}
           <button
@@ -69,6 +86,14 @@ const Navigation = () => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden pb-4 animate-fade-in">
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="w-full text-left py-2 hover:text-red-500 transition-colors duration-200"
+              aria-label={t('language.toggleLabel')}
+            >
+              {i18n.language === 'fa' ? t('language.en') : t('language.fa')}
+            </button>
             {navLinks.map((link) => (
               <Link
                 key={link.to}

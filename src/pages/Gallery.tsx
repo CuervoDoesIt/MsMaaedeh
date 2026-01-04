@@ -1,21 +1,23 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Gallery = () => {
+  const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const categories = ['all', 'nigiri', 'maki', 'sashimi', 'special'];
 
   // Placeholder gallery items
   const galleryItems = [
-    { id: 1, category: 'nigiri', title: 'Tuna Nigiri', emoji: '🍣' },
-    { id: 2, category: 'maki', title: 'Dragon Roll', emoji: '🍙' },
-    { id: 3, category: 'sashimi', title: 'Salmon Sashimi', emoji: '🐟' },
-    { id: 4, category: 'special', title: 'Rainbow Platter', emoji: '🌈' },
-    { id: 5, category: 'nigiri', title: 'Salmon Nigiri', emoji: '🍣' },
-    { id: 6, category: 'maki', title: 'California Roll', emoji: '🍙' },
-    { id: 7, category: 'sashimi', title: 'Tuna Sashimi', emoji: '🐟' },
-    { id: 8, category: 'special', title: 'Artistic Creation', emoji: '🎨' },
-    { id: 9, category: 'nigiri', title: 'Eel Nigiri', emoji: '🍣' },
+    { id: 1, category: 'nigiri', titleKey: 'gallery.items.tunaNigiri', emoji: '🍣' },
+    { id: 2, category: 'maki', titleKey: 'gallery.items.dragonRoll', emoji: '🍙' },
+    { id: 3, category: 'sashimi', titleKey: 'gallery.items.salmonSashimi', emoji: '🐟' },
+    { id: 4, category: 'special', titleKey: 'gallery.items.rainbowPlatter', emoji: '🌈' },
+    { id: 5, category: 'nigiri', titleKey: 'gallery.items.salmonNigiri', emoji: '🍣' },
+    { id: 6, category: 'maki', titleKey: 'gallery.items.californiaRoll', emoji: '🍙' },
+    { id: 7, category: 'sashimi', titleKey: 'gallery.items.tunaSashimi', emoji: '🐟' },
+    { id: 8, category: 'special', titleKey: 'gallery.items.artisticCreation', emoji: '🎨' },
+    { id: 9, category: 'nigiri', titleKey: 'gallery.items.eelNigiri', emoji: '🍣' },
   ];
 
   const filteredItems =
@@ -28,9 +30,9 @@ const Gallery = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Gallery</h1>
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">{t('gallery.header.title')}</h1>
           <p className="text-xl text-gray-600">
-            Explore our collection of artisan sushi creations
+            {t('gallery.header.subtitle')}
           </p>
         </div>
 
@@ -46,7 +48,7 @@ const Gallery = () => {
                   : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
+              {t(`gallery.categories.${category}`)}
             </button>
           ))}
         </div>
@@ -65,15 +67,15 @@ const Gallery = () => {
                 </span>
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{t(item.titleKey)}</h3>
                 <p className="text-gray-600 text-sm uppercase tracking-wide">
-                  {item.category}
+                  {t(`gallery.categories.${item.category}`)}
                 </p>
               </div>
               {/* Overlay on hover */}
               <div className="absolute inset-0 bg-red-600 bg-opacity-0 group-hover:bg-opacity-90 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
                 <button className="bg-white text-red-600 px-6 py-2 rounded-lg font-semibold">
-                  View Details
+                  {t('gallery.viewDetails')}
                 </button>
               </div>
             </div>
@@ -83,14 +85,14 @@ const Gallery = () => {
         {/* Carousel Section */}
         <div className="mt-20">
           <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
-            Featured Creations
+            {t('gallery.featured.title')}
           </h2>
           <div className="relative bg-white rounded-lg shadow-xl p-8">
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
                 <span className="text-9xl block mb-4">🍱</span>
                 <p className="text-gray-500 text-lg">
-                  [Placeholder for carousel component]
+                  {t('gallery.featured.placeholder')}
                 </p>
               </div>
             </div>

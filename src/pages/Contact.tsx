@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Contact = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -13,7 +15,7 @@ const Contact = () => {
     e.preventDefault();
     // Placeholder for form submission logic
     console.log('Form submitted:', formData);
-    alert('Thank you for your message! We will get back to you soon.');
+    alert(t('contact.form.successAlert'));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -28,20 +30,20 @@ const Contact = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Contact Us</h1>
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">{t('contact.header.title')}</h1>
           <p className="text-xl text-gray-600">
-            Get in touch to book a workshop, request catering, or just say hello
+            {t('contact.header.subtitle')}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-12">
           {/* Contact Form */}
           <div className="bg-white rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Send a Message</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('contact.form.title')}</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name *
+                  {t('contact.form.fullName')} *
                 </label>
                 <input
                   type="text"
@@ -51,13 +53,13 @@ const Contact = () => {
                   value={formData.name}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition"
-                  placeholder="Your name"
+                  placeholder={t('contact.form.fullNamePlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
+                  {t('contact.form.email')} *
                 </label>
                 <input
                   type="email"
@@ -67,13 +69,13 @@ const Contact = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition"
-                  placeholder="your.email@example.com"
+                  placeholder={t('contact.form.emailPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
+                  {t('contact.form.phone')}
                 </label>
                 <input
                   type="tel"
@@ -82,13 +84,13 @@ const Contact = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition"
-                  placeholder="(555) 123-4567"
+                  placeholder={t('contact.form.phonePlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                  Subject *
+                  {t('contact.form.subject')} *
                 </label>
                 <select
                   id="subject"
@@ -98,17 +100,17 @@ const Contact = () => {
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition"
                 >
-                  <option value="">Select a subject</option>
-                  <option value="workshop">Workshop Inquiry</option>
-                  <option value="catering">Catering Request</option>
-                  <option value="general">General Question</option>
-                  <option value="other">Other</option>
+                  <option value="">{t('contact.form.subjectPlaceholder')}</option>
+                  <option value="workshop">{t('contact.form.subjectOptions.workshop')}</option>
+                  <option value="catering">{t('contact.form.subjectOptions.catering')}</option>
+                  <option value="general">{t('contact.form.subjectOptions.general')}</option>
+                  <option value="other">{t('contact.form.subjectOptions.other')}</option>
                 </select>
               </div>
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                  Message *
+                  {t('contact.form.message')} *
                 </label>
                 <textarea
                   id="message"
@@ -118,7 +120,7 @@ const Contact = () => {
                   onChange={handleChange}
                   rows={5}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition resize-none"
-                  placeholder="Tell us about your inquiry..."
+                  placeholder={t('contact.form.messagePlaceholder')}
                 />
               </div>
 
@@ -126,7 +128,7 @@ const Contact = () => {
                 type="submit"
                 className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors"
               >
-                Send Message
+                {t('contact.form.send')}
               </button>
             </form>
           </div>
@@ -135,7 +137,7 @@ const Contact = () => {
           <div className="space-y-8">
             {/* Info Cards */}
             <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('contact.info.title')}</h2>
               <div className="space-y-6">
                 <div className="flex items-start">
                   <div className="bg-red-100 p-3 rounded-lg mr-4">
@@ -144,7 +146,7 @@ const Contact = () => {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">{t('contact.info.email')}</h3>
                     <a href="mailto:hello@msmaaedeh.com" className="text-gray-600 hover:text-red-600 transition-colors">
                       hello@msmaaedeh.com
                     </a>
@@ -158,7 +160,7 @@ const Contact = () => {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">{t('contact.info.phone')}</h3>
                     <a href="tel:+15551234567" className="text-gray-600 hover:text-red-600 transition-colors">
                       (555) 123-4567
                     </a>
@@ -173,11 +175,11 @@ const Contact = () => {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">Location</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">{t('contact.info.location')}</h3>
                     <p className="text-gray-600">
-                      San Francisco, CA
+                      {t('contact.info.locationValue1')}
                       <br />
-                      (Exact location provided upon booking)
+                      {t('contact.info.locationValue2')}
                     </p>
                   </div>
                 </div>
@@ -186,30 +188,30 @@ const Contact = () => {
 
             {/* Hours */}
             <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Availability</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('contact.availability.title')}</h2>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Workshops</span>
-                  <span className="font-semibold text-gray-900">By Appointment</span>
+                  <span className="text-gray-600">{t('contact.availability.workshops')}</span>
+                  <span className="font-semibold text-gray-900">{t('contact.availability.workshopsValue')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Catering</span>
-                  <span className="font-semibold text-gray-900">Book in Advance</span>
+                  <span className="text-gray-600">{t('contact.availability.catering')}</span>
+                  <span className="font-semibold text-gray-900">{t('contact.availability.cateringValue')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Response Time</span>
-                  <span className="font-semibold text-gray-900">24-48 Hours</span>
+                  <span className="text-gray-600">{t('contact.availability.responseTime')}</span>
+                  <span className="font-semibold text-gray-900">{t('contact.availability.responseTimeValue')}</span>
                 </div>
               </div>
             </div>
 
             {/* Social */}
             <div className="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg p-8">
-              <h2 className="text-2xl font-bold mb-4">Follow Our Journey</h2>
+              <h2 className="text-2xl font-bold mb-4">{t('contact.social.title')}</h2>
               <p className="mb-6 text-red-100">
-                Stay updated with our latest creations, workshop schedules, and special events
+                {t('contact.social.desc')}
               </p>
-              <div className="flex space-x-4">
+              <div className="flex gap-4">
                 <a
                   href="https://instagram.com"
                   target="_blank"
