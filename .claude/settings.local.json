@@ -1,0 +1,169 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit(**)",
+      "Write(**)",
+      "Read(//**/.*)",
+      "Read(//tmp/claude/**)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Bash(curl:*)",
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(echo:*)",
+      "Bash(rm:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(wc:*)",
+      "Bash(touch:*)",
+      "Bash(chmod:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(pip:*)",
+      "Bash(pip3:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npx jest:*)",
+      "Bash(npx vitest:*)",
+      "Bash(git clone:*)",
+      "Bash(powershell:*)",
+      "Bash(cmd:*)",
+      "Bash(dir:*)",
+      "Bash(type:*)",
+      "Bash(copy:*)",
+      "Bash(move:*)",
+      "Bash(del:*)",
+      "Bash(md:*)",
+      "Bash(rd:*)",
+      "Bash(where:*)",
+      "Bash(set:*)",
+      "Bash(cls:*)",
+      "Skill(*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session_start.py",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/orphan_cleanup.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/context_injector.py",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/safety_firewall.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/auto_lint.py",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/typecheck_gate.py",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/audit_logger.py",
+            "timeout": 2
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/metrics_collector.py",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session_checkpoint.py",
+            "timeout": 2
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/notification_hook.py",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/precompact_save.py",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/subagent_summarizer.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "defaultMode": "acceptEdits"
+}

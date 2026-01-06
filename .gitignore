@@ -22,3 +22,17 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code runtime data (don't commit)
+.claude/audit.log
+.claude/metrics.jsonl
+.claude/memory/session_log.md
+.claude/memory/precompact_state.md
+.claude/notifications.log
+
+# Keep configuration (do commit)
+# !.claude/settings.local.json
+# !.claude/mcp.json
+# !.claude/agents/
+# !.claude/hooks/
+# !.claude/scripts/
