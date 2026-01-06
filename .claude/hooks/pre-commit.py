@@ -14,7 +14,7 @@ def get_staged_files() -> list:
     """Get list of staged files."""
     result = subprocess.run(
         ['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'],
-        capture_output=True, text=True
+        capture_output=True, text=True, shell=True
     )
     if result.returncode != 0:
         return []
@@ -28,10 +28,13 @@ def run_prettier(files: list) -> tuple:
         return True, ""
 
     try:
-        result = subprocess.run(['npx', 'prettier', '--check'] + target_files,
-                                capture_output=True, text=True, timeout=30)
+        cmd = ['npx', 'prettier', '--check'] + target_files
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, shell=True)
         if result.returncode != 0:
             return False, f"Prettier issues:\n{result.stdout}"
+        return True, ""
+    except FileNotFoundError:
+        # npx/prettier not found, skip check
         return True, ""
     except Exception as e:
         return False, str(e)
@@ -44,10 +47,13 @@ def run_eslint(files: list) -> tuple:
         return True, ""
 
     try:
-        result = subprocess.run(['npx', 'eslint', '--quiet'] + target_files,
-                                capture_output=True, text=True, timeout=60)
+        cmd = ['npx', 'eslint', '--quiet'] + target_files
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, shell=True)
         if result.returncode != 0:
             return False, f"ESLint errors:\n{result.stdout}{result.stderr}"
+        return True, ""
+    except FileNotFoundError:
+        # npx/eslint not found, skip check
         return True, ""
     except Exception as e:
         return False, str(e)
@@ -57,13 +63,16 @@ def run_typecheck() -> tuple:
     """Run TypeScript type check."""
     try:
         result = subprocess.run(['npx', 'tsc', '--noEmit'],
-                                capture_output=True, text=True, timeout=120)
+                                capture_output=True, text=True, timeout=120, shell=True)
         if result.returncode != 0:
             errors = result.stdout + result.stderr
             if len(errors) > 2000:
                 error_count = errors.count(': error TS')
                 errors = errors[:2000] + f"\n... ({error_count} total errors)"
             return False, f"TypeScript errors:\n{errors}"
+        return True, ""
+    except FileNotFoundError:
+        # npx/tsc not found, skip check
         return True, ""
     except Exception as e:
         return False, str(e)

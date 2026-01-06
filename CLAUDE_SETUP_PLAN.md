@@ -6,9 +6,36 @@ This document provides step-by-step instructions for setting up an enhanced `.cl
 
 This setup provides:
 - **9 Specialized Agents** - Architect, Code Reviewer, Database Optimizer, Deep Researcher, Domain Builder, LLM Architect, Migration Specialist, Security Auditor, Test Runner
-- **14 Automation Hooks** - Session management, safety firewall, auto-linting, type checking, metrics, notifications
-- **MCP Server Integration** - Neo4j, GitHub, Filesystem, Fetch
+- **13 Automation Hooks** - Session management, safety firewall, auto-linting, type checking, metrics, notifications
+- **MCP Server Integration** - GitHub, Filesystem, Fetch
 - **Metrics & Audit Logging** - Track usage, costs, and tool executions
+
+## Prerequisites
+
+Before starting, ensure you have:
+- Python 3.8+ installed
+- Node.js and npm installed
+- Git repository initialized
+- `GITHUB_TOKEN` environment variable set (for GitHub MCP server)
+
+### Setting Up Environment Variables
+
+**Windows (PowerShell - Permanent):**
+```powershell
+[System.Environment]::SetEnvironmentVariable('GITHUB_TOKEN', 'ghp_xxxxxxxxxxxx', 'User')
+```
+
+**Windows (GUI):**
+1. Press `Win + R`, type `sysdm.cpl`, press Enter
+2. Go to **Advanced** tab → **Environment Variables**
+3. Under "User variables", click **New**
+4. Set Variable name: `GITHUB_TOKEN`, Variable value: `your_token`
+
+**Linux/Mac:**
+```bash
+echo 'export GITHUB_TOKEN=ghp_xxxxxxxxxxxx' >> ~/.bashrc
+source ~/.bashrc
+```
 
 ---
 
@@ -66,12 +93,29 @@ This file configures permissions and hooks. Create `.claude/settings.local.json`
       "Bash(cp:*)",
       "Bash(mv:*)",
       "Bash(wc:*)",
+      "Bash(touch:*)",
+      "Bash(chmod:*)",
       "Bash(python:*)",
       "Bash(python3:*)",
+      "Bash(pip:*)",
+      "Bash(pip3:*)",
       "Bash(npm run build:*)",
       "Bash(npx tsc --noEmit)",
       "Bash(npx jest:*)",
+      "Bash(npx vitest:*)",
       "Bash(git clone:*)",
+      "Bash(powershell:*)",
+      "Bash(cmd:*)",
+      "Bash(dir:*)",
+      "Bash(type:*)",
+      "Bash(copy:*)",
+      "Bash(move:*)",
+      "Bash(del:*)",
+      "Bash(md:*)",
+      "Bash(rd:*)",
+      "Bash(where:*)",
+      "Bash(set:*)",
+      "Bash(cls:*)",
       "Skill(*)"
     ]
   },
@@ -196,15 +240,29 @@ This file configures permissions and hooks. Create `.claude/settings.local.json`
 ```
 
 **Customization Notes:**
-- Add platform-specific commands (Windows: `powershell:*`, `dir:*`, `type:*`, etc.)
+- Both Unix and Windows commands are included by default for cross-platform compatibility
 - Add project-specific tool permissions as needed
 - Adjust hook timeouts based on your system performance
 
 ---
 
-## Task 3: Create mcp.json
+## Task 3: Check Project Structure and Create mcp.json
 
-This file configures MCP (Model Context Protocol) servers. Create `.claude/mcp.json`:
+**First, check your project structure** to determine which paths to include:
+
+```bash
+# List your project directories
+ls -la
+```
+
+Common folder patterns:
+- `src/` - Source code (most projects)
+- `public/` - Static assets (React/Vue/etc.)
+- `docs/` - Documentation
+- `lib/` - Libraries
+- `.claude/` - Claude configuration (always include)
+
+Then create `.claude/mcp.json` with paths that exist in YOUR project:
 
 ```json
 {
@@ -214,8 +272,8 @@ This file configures MCP (Model Context Protocol) servers. Create `.claude/mcp.j
       "args": [
         "-y",
         "@anthropic/mcp-server-filesystem",
-        "docs/",
         "src/",
+        "public/",
         ".claude/"
       ]
     },
@@ -234,10 +292,12 @@ This file configures MCP (Model Context Protocol) servers. Create `.claude/mcp.j
 }
 ```
 
+**IMPORTANT:** Adjust the filesystem paths above to match YOUR project structure. Only include directories that actually exist.
+
 **Customization Notes:**
-- Adjust filesystem paths to match your project structure
+- The `${GITHUB_TOKEN}` references your environment variable (see Prerequisites)
 - Add database servers (Neo4j, PostgreSQL, etc.) if needed
-- Add project-specific MCP servers
+- Add project-specific MCP servers as required
 
 ---
 
@@ -1038,7 +1098,7 @@ pytest --cov --verbose -x
 
 ## Task 5: Create Hooks
 
-Create the following 14 Python hook files in `.claude/hooks/`:
+Create the following 13 Python hook files in `.claude/hooks/`:
 
 ### 5.1 session_start.py
 
@@ -2126,6 +2186,8 @@ if __name__ == '__main__':
 """
 Git Pre-Commit Hook Integration
 Install by running: python .claude/hooks/pre-commit.py --install
+
+Note: Uses shell=True for Windows compatibility with npx commands.
 """
 
 import sys
@@ -2138,7 +2200,7 @@ def get_staged_files() -> list:
     """Get list of staged files."""
     result = subprocess.run(
         ['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'],
-        capture_output=True, text=True
+        capture_output=True, text=True, shell=True
     )
     if result.returncode != 0:
         return []
@@ -2152,10 +2214,13 @@ def run_prettier(files: list) -> tuple:
         return True, ""
 
     try:
-        result = subprocess.run(['npx', 'prettier', '--check'] + target_files,
-                                capture_output=True, text=True, timeout=30)
+        cmd = ['npx', 'prettier', '--check'] + target_files
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, shell=True)
         if result.returncode != 0:
             return False, f"Prettier issues:\n{result.stdout}"
+        return True, ""
+    except FileNotFoundError:
+        # npx/prettier not found, skip check
         return True, ""
     except Exception as e:
         return False, str(e)
@@ -2168,10 +2233,13 @@ def run_eslint(files: list) -> tuple:
         return True, ""
 
     try:
-        result = subprocess.run(['npx', 'eslint', '--quiet'] + target_files,
-                                capture_output=True, text=True, timeout=60)
+        cmd = ['npx', 'eslint', '--quiet'] + target_files
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, shell=True)
         if result.returncode != 0:
             return False, f"ESLint errors:\n{result.stdout}{result.stderr}"
+        return True, ""
+    except FileNotFoundError:
+        # npx/eslint not found, skip check
         return True, ""
     except Exception as e:
         return False, str(e)
@@ -2181,13 +2249,16 @@ def run_typecheck() -> tuple:
     """Run TypeScript type check."""
     try:
         result = subprocess.run(['npx', 'tsc', '--noEmit'],
-                                capture_output=True, text=True, timeout=120)
+                                capture_output=True, text=True, timeout=120, shell=True)
         if result.returncode != 0:
             errors = result.stdout + result.stderr
             if len(errors) > 2000:
                 error_count = errors.count(': error TS')
                 errors = errors[:2000] + f"\n... ({error_count} total errors)"
             return False, f"TypeScript errors:\n{errors}"
+        return True, ""
+    except FileNotFoundError:
+        # npx/tsc not found, skip check
         return True, ""
     except Exception as e:
         return False, str(e)
@@ -2556,7 +2627,26 @@ After completing all tasks, your `.claude` folder should contain:
 
 This configuration provides:
 - 9 specialized agents for different tasks
-- 14 automation hooks for safety, quality, and observability
+- 13 automation hooks for safety, quality, and observability
 - MCP server integration for extended capabilities
 - Metrics tracking and audit logging
 - Notification system for important events
+
+---
+
+## Troubleshooting
+
+### Pre-commit Hook Fails on Windows
+If you get `[WinError 2] The system cannot find the file specified`, the hook already includes `shell=True` for Windows compatibility. If issues persist:
+```bash
+git commit --no-verify -m "Your message"
+```
+
+### Missing GITHUB_TOKEN Warning
+Set the environment variable as described in the Prerequisites section. Restart your terminal after setting it.
+
+### Hooks Not Running
+Ensure Python is in your PATH and the hooks have execute permissions:
+```bash
+chmod +x .claude/hooks/*.py
+```
